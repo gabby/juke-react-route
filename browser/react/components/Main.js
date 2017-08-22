@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {HashRouter as Router, Route, Link, Switch} from 'react-router-dom';
 import axios from 'axios';
 import AllAlbums from './AllAlbums';
 import SingleAlbum from './SingleAlbum';
@@ -10,19 +11,10 @@ export default class Main extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      albums: [],
       selectedAlbum: {}
     };
     this.selectAlbum = this.selectAlbum.bind(this);
     this.deselectAlbum = this.deselectAlbum.bind(this);
-  }
-
-  componentDidMount () {
-    axios.get('/api/albums/')
-      .then(res => res.data)
-      .then(albums => {
-        this.setState({ albums })
-      });
   }
 
   selectAlbum (albumId) {
@@ -40,16 +32,23 @@ export default class Main extends Component {
   render () {
     return (
       <div id="main" className="container-fluid">
+
         <div className="col-xs-2">
           <Sidebar deselectAlbum={this.deselectAlbum} />
         </div>
-        <div className="col-xs-10">
-        {
-          this.state.selectedAlbum.id ?
-          <SingleAlbum album={this.state.selectedAlbum} /> :
-          <AllAlbums albums={this.state.albums} selectAlbum={this.selectAlbum} />
-        }
-        </div>
+        <Router>
+          <div className="col-xs-10">
+            <Route 
+              path='/albums' 
+              component= {AllAlbums}
+              />
+              <Route 
+              exact
+              path='/' 
+              component= {AllAlbums}
+              />
+          </div>
+        </Router>
         <Player />
       </div>
     );
